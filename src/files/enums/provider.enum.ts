@@ -1,4 +1,4 @@
 export enum Provider {
-  INTERNAL = 'Pack',
-  EXTERNAL = 'External',
+  INTERNAL = 'pack',
+  EXTERNAL = 'external',
 }

@@ -1,5 +1,5 @@
 export enum Category {
-  CONFLICT_RESOLUTION = 'Conflict resolution',
-  DESIGN = 'Design',
-  MARKETING = 'Marketing',
+  CONFLICT_RESOLUTION = 'conflict_resolucion',
+  DESIGN = 'design',
+  MARKETING = 'marketing',
 }

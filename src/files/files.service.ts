@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { FilesRepository } from './repositories/files.repository';
 import { S3Service } from 'src/aws/s3/s3.service';
-import { CreateFileDto } from './dto/createFile.dto';
+import { CreateFileDto } from './dto/createFilesOutput.dto';
+import { GetFilesOutputDto } from './dto/getFiles.dto';
 
 @Injectable()
 export class FilesService {
@@ -12,12 +13,27 @@ export class FilesService {
 
   async create(data: CreateFileDto, file: Express.Multer.File) {
     const fileUrl = await this.s3Service.uploadFile(file);
+    console.log('File uploaded to S3:', fileUrl);
+    const newFile = await this.fileRepository.createFile({
+      ...data,
+      fileUrl,
+    });
+    console.log('File created:', newFile);
+    return newFile;
+  }
 
-    // const newFile = this.filesRepo.create({
-    //   ...data,
-    //   fileUrl,
-    // });
+  findAllFiles(): Promise<GetFilesOutputDto[]> {
+    return this.fileRepository.findAll();
+  }
 
-    //return await this.filesRepo.save(newFile);
+  async downloadFile(id: string): Promise<string> {
+    const file = await this.fileRepository.findOne({ where: { id } });
+    if (!file) throw new NotFoundException('File not found');
+
+    await this.fileRepository.incrementViewCount(id);
+
+    const fileKey = file.fileUrl.split('/').slice(-1)[0];
+
+    return this.s3Service.generatePresignedUrl(fileKey);
   }
 }

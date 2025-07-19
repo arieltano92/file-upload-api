@@ -38,4 +38,7 @@ export class CreateFileDto {
   @ApiProperty({ enum: Role, example: Role.MENTOR })
   @IsEnum(Role)
   role: Role;
+
+  @ApiProperty({})
+  file: Express.Multer.File;
 }

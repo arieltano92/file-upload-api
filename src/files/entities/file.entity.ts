@@ -37,4 +37,7 @@ export class File {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @Column({ default: 0 })
+  viewCount: number;
 }

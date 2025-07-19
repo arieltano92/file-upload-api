@@ -8,7 +8,16 @@ export class FilesRepository extends Repository<File> {
     super(File, dataSource.createEntityManager());
   }
 
-  async findWithFilters(): Promise<File[]> {
+  async createFile(fileData: Partial<File>): Promise<File> {
+    const file = this.create(fileData);
+    return this.save(file);
+  }
+
+  async findAll(): Promise<File[]> {
     return this.find({ order: { createdAt: 'DESC' } });
+  }
+
+  async incrementViewCount(id: string): Promise<void> {
+    await this.increment({ id }, 'viewCount', 1);
   }
 }
