@@ -4,6 +4,8 @@ import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { environmentValidationSchema } from './configuration';
+import { FilesModule } from './files/files.module';
+import { AwsModule } from './aws/aws.module';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { environmentValidationSchema } from './configuration';
       }),
       inject: [ConfigService],
     }),
+    FilesModule,
+    AwsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
