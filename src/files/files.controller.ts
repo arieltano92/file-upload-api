@@ -16,6 +16,7 @@ import { CreateFileDto } from './dto/createFilesOutput.dto';
 import { ApiConsumes, ApiOkResponse, ApiParam } from '@nestjs/swagger';
 import { GetFilesOutputDto } from './dto/getFiles.dto';
 import { Response } from 'express';
+import { StatsResponseDto } from './dto/statsOutput.dto';
 
 @Controller('files')
 export class FilesController {
@@ -51,5 +52,14 @@ export class FilesController {
   async download(@Param('id') id: string, @Res() res: Response) {
     const url = await this.filesService.downloadFile(id);
     return res.redirect(url);
+  }
+
+  @Get('/stats')
+  @ApiOkResponse({
+    description: 'Aggregated statistics about uploaded files',
+    type: StatsResponseDto,
+  })
+  async getStats(): Promise<StatsResponseDto> {
+    return this.filesService.getStats();
   }
 }

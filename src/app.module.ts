@@ -6,6 +6,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { environmentValidationSchema } from './configuration';
 import { FilesModule } from './files/files.module';
 import { AwsModule } from './aws/aws.module';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -29,6 +31,8 @@ import { AwsModule } from './aws/aws.module';
     }),
     FilesModule,
     AwsModule,
+    AuthModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -3,6 +3,7 @@ import { FilesRepository } from './repositories/files.repository';
 import { S3Service } from 'src/aws/s3/s3.service';
 import { CreateFileDto } from './dto/createFilesOutput.dto';
 import { GetFilesOutputDto } from './dto/getFiles.dto';
+import { StatsResponseDto } from './dto/statsOutput.dto';
 
 @Injectable()
 export class FilesService {
@@ -35,5 +36,19 @@ export class FilesService {
     const fileKey = file.fileUrl.split('/').slice(-1)[0];
 
     return this.s3Service.generatePresignedUrl(fileKey);
+  }
+
+  async getStats(): Promise<StatsResponseDto> {
+    const [totalUploads, categoryBreakdown, topFiles] = await Promise.all([
+      this.fileRepository.count(),
+      this.fileRepository.getCategoryBreakdown(),
+      this.fileRepository.getTopFiles(),
+    ]);
+
+    return {
+      totalUploads,
+      categoryBreakdown,
+      topFiles,
+    };
   }
 }
