@@ -9,7 +9,7 @@ import { Category } from '../enums/category.enum';
 import { Language } from '../enums/language.enum';
 import { Provider } from '../enums/provider.enum';
 import { Role } from '../enums/role.enum';
-import { User } from 'src/users/entities/user.entity';
+import { User } from '../../users/entities/user.entity';
 
 @Entity()
 export class File {

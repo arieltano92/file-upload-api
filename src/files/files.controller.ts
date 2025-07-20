@@ -14,7 +14,7 @@ import {
 import { FilesService } from './files.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as multer from 'multer';
-import { CreateFileDto } from './dto/createFilesOutput.dto';
+import { CreateFileDto } from './dto/createFile.dto';
 import { ApiConsumes, ApiOkResponse, ApiParam } from '@nestjs/swagger';
 import { GetFilesOutputDto } from './dto/getFiles.dto';
 import { Response } from 'express';
@@ -42,7 +42,7 @@ export class FilesController {
     @CurrentUser() user: JwtPayload,
     @UploadedFile() file: Express.Multer.File,
     @Body() fileMetadata: CreateFileDto,
-  ) {
+  ): Promise<GetFilesOutputDto> {
     return this.filesService.create(fileMetadata, file, user.userId);
   }
 

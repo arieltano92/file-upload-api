@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { FilesRepository } from './repositories/files.repository';
-import { S3Service } from 'src/aws/s3/s3.service';
-import { CreateFileDto } from './dto/createFilesOutput.dto';
+import { S3Service } from '../aws/s3/s3.service';
+import { CreateFileDto } from './dto/createFile.dto';
 import { GetFilesOutputDto } from './dto/getFiles.dto';
 import { StatsResponseDto } from './dto/statsOutput.dto';
 import { mapperFileToOutputDto } from './mappers/files.mapper';
@@ -13,7 +13,11 @@ export class FilesService {
     private readonly s3Service: S3Service,
   ) {}
 
-  async create(data: CreateFileDto, file: Express.Multer.File, userId: string) {
+  async create(
+    data: CreateFileDto,
+    file: Express.Multer.File,
+    userId: string,
+  ): Promise<GetFilesOutputDto> {
     const fileUrl = await this.s3Service.uploadFile(file);
     console.log('File uploaded to S3:', fileUrl);
     const newFile = await this.fileRepository.createFile({
@@ -31,7 +35,6 @@ export class FilesService {
   }
 
   async downloadFile(id: string): Promise<string> {
-    console.log('pase');
     const file = await this.fileRepository.findOne({ where: { id } });
     if (!file) throw new NotFoundException('File not found');
 
