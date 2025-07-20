@@ -4,19 +4,29 @@ This project is a backend API for managing file uploads by authenticated users, 
 
 ## 🚀 Getting Started
 
-To run the application locally:
+## ⚙️ Environment Configuration
+
+Create a .env file based on the provided .env.example.
+
+IMPORTANT:
+
+You will need valid AWS credentials and an existing S3 bucket, as uploaded files are stored directly in AWS S3.
+
+Although it would have been possible to use LocalStack to simulate an S3 bucket locally via docker-compose, this approach was ultimately avoided due to two main reasons:
+
+Download redirect behavior (/files/:id/download) was unreliable when using LocalStack, since the generated pre-signed URLs failed to resolve correctly within a containerized environment.
+
+Using a real private AWS S3 bucket better demonstrates the ability to generate and serve secure, time-limited pre-signed URLs, allowing for controlled access to private files as would happen in production.
+
+As such, the current setup uses a real AWS S3 bucket, even in development. Make sure to configure your .env file with valid AWS credentials and an existing bucket name.
+
+## Run the application locally:
 
 ```bash
 
 docker-compose up --build
 
 ```
-
-## ⚙️ Environment Configuration
-
-Create a .env file based on the provided .env.example.
-
-You will need valid AWS credentials and an existing S3 bucket, as uploaded files are stored directly in AWS S3.
 
 ## 📚 API Documentation
 
@@ -52,7 +62,7 @@ npm run test
 
 ## ☁️ Deployment
 
-This project was deployed using AWS CDK, which provisions:
+This project was deployed using AWS CDK (https://github.com/arieltano92/file-upload-api-cdk) which provisions:
 
 ECS (Fargate) to run the backend container
 
