@@ -26,6 +26,16 @@ import { UsersModule } from './users/users.module';
         database: configService.get<string>('DATABASE_NAME'),
         autoLoadEntities: true,
         synchronize: true, // only for development, not recommended for production
+        ...(configService.get('NODE_ENV') === 'local'
+          ? {}
+          : {
+              ssl: true,
+              extra: {
+                ssl: {
+                  rejectUnauthorized: false,
+                },
+              },
+            }),
       }),
       inject: [ConfigService],
     }),

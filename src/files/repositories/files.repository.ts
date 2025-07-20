@@ -15,7 +15,10 @@ export class FilesRepository extends Repository<File> {
   }
 
   async findAll(): Promise<File[]> {
-    return this.find({ order: { createdAt: 'DESC' } });
+    return this.find({
+      relations: ['user'],
+      order: { createdAt: 'DESC' },
+    });
   }
 
   async incrementViewCount(id: string): Promise<void> {

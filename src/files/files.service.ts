@@ -4,6 +4,7 @@ import { S3Service } from 'src/aws/s3/s3.service';
 import { CreateFileDto } from './dto/createFilesOutput.dto';
 import { GetFilesOutputDto } from './dto/getFiles.dto';
 import { StatsResponseDto } from './dto/statsOutput.dto';
+import { mapperFileToOutputDto } from './mappers/files.mapper';
 
 @Injectable()
 export class FilesService {
@@ -12,22 +13,25 @@ export class FilesService {
     private readonly s3Service: S3Service,
   ) {}
 
-  async create(data: CreateFileDto, file: Express.Multer.File) {
+  async create(data: CreateFileDto, file: Express.Multer.File, userId: string) {
     const fileUrl = await this.s3Service.uploadFile(file);
     console.log('File uploaded to S3:', fileUrl);
     const newFile = await this.fileRepository.createFile({
       ...data,
       fileUrl,
+      userId,
     });
     console.log('File created:', newFile);
     return newFile;
   }
 
-  findAllFiles(): Promise<GetFilesOutputDto[]> {
-    return this.fileRepository.findAll();
+  async findAllFiles(): Promise<GetFilesOutputDto[]> {
+    const files = await this.fileRepository.findAll();
+    return files.map(mapperFileToOutputDto);
   }
 
   async downloadFile(id: string): Promise<string> {
+    console.log('pase');
     const file = await this.fileRepository.findOne({ where: { id } });
     if (!file) throw new NotFoundException('File not found');
 

@@ -4,9 +4,11 @@ import {
   Get,
   HttpCode,
   Param,
+  ParseUUIDPipe,
   Post,
   Res,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FilesService } from './files.service';
@@ -17,11 +19,15 @@ import { ApiConsumes, ApiOkResponse, ApiParam } from '@nestjs/swagger';
 import { GetFilesOutputDto } from './dto/getFiles.dto';
 import { Response } from 'express';
 import { StatsResponseDto } from './dto/statsOutput.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import { JwtPayload } from 'src/auth/interfaces/jwt-payload.interface';
 
 @Controller('files')
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   @UseInterceptors(
     FileInterceptor('file', {
@@ -33,10 +39,11 @@ export class FilesController {
   )
   @ApiConsumes('multipart/form-data')
   async uploadFile(
+    @CurrentUser() user: JwtPayload,
     @UploadedFile() file: Express.Multer.File,
-    @Body() body: CreateFileDto,
+    @Body() fileMetadata: CreateFileDto,
   ) {
-    return this.filesService.create(body, file);
+    return this.filesService.create(fileMetadata, file, user.userId);
   }
 
   @Get()
@@ -46,10 +53,14 @@ export class FilesController {
     return files;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id/download')
   @HttpCode(302)
   @ApiParam({ name: 'id', description: 'File ID' })
-  async download(@Param('id') id: string, @Res() res: Response) {
+  async download(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Res() res: Response,
+  ) {
     const url = await this.filesService.downloadFile(id);
     return res.redirect(url);
   }

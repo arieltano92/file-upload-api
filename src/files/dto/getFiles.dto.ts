@@ -4,6 +4,20 @@ import { Language } from '../enums/language.enum';
 import { Provider } from '../enums/provider.enum';
 import { Role } from '../enums/role.enum';
 
+class UserSummaryDto {
+  @ApiProperty()
+  id: string;
+
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty()
+  surname: string;
+
+  @ApiProperty()
+  email: string;
+}
+
 export class GetFilesOutputDto {
   @ApiProperty()
   id: string;
@@ -34,4 +48,7 @@ export class GetFilesOutputDto {
 
   @ApiProperty()
   createdAt: Date;
+
+  @ApiProperty({ type: UserSummaryDto })
+  user: UserSummaryDto;
 }

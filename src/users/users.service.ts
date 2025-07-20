@@ -7,7 +7,7 @@ export class UsersService {
   constructor(private readonly userRepository: UsersRepository) {}
 
   create(user: Partial<User>) {
-    return this.userRepository.create(user);
+    return this.userRepository.save(user);
   }
 
   findByEmail(email: string) {
