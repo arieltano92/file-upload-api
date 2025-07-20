@@ -1,91 +1,73 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# 📁 File Uploads API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This project is a backend API for managing file uploads by authenticated users, built with NestJS, PostgreSQL, and AWS S3. Deployment with AWS CDK.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 🚀 Getting Started
 
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Installation
+To run the application locally:
 
 ```bash
-$ npm install
+
+docker-compose up --build
+
 ```
 
-## Running the app
+## ⚙️ Environment Configuration
+
+Create a .env file based on the provided .env.example.
+
+You will need valid AWS credentials and an existing S3 bucket, as uploaded files are stored directly in AWS S3.
+
+## 📚 API Documentation
+
+The API documentation is available at:
+http://localhost:3000/api
+
+## 🔐 Authentication
+
+1- Register a new user with email ,password, name and surname.
+
+POST /auth/register
+
+2- Log in to obtain a JWT token. Use the JWT token to access protected routes by including it in the Authorization header as a Bearer token.
+
+POST /auth/login
+
+Use the token in the Authorization header: Authorization: Bearer <your-token>
+
+## 🔒 Protected Endpoints
+
+- POST /files — upload a file
+- GET /files/:id/download — download a file (also increments the view count)
+
+## 🧪 Testing
+
+For simplicity, a few unit tests have been added focusing on the FilesService.
+
+Run the tests with:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm run test
 ```
 
-## Test
+## ☁️ Deployment
 
-```bash
-# unit tests
-$ npm run test
+This project was deployed using AWS CDK, which provisions:
 
-# e2e tests
-$ npm run test:e2e
+ECS (Fargate) to run the backend container
 
-# test coverage
-$ npm run test:cov
-```
+RDS (PostgreSQL) for data persistence
 
-## Support
+S3 for file storage
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## 📝 Notes
 
-## Stay in touch
+Dockerized with docker-compose for local development
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Files are uploaded directly to S3 (no local file storage)
 
-## License
+JWT-based authentication is implemented
 
-Nest is [MIT licensed](LICENSE).
+Only minimal unit tests are included
 
-# file-upload-api
-
-# Docker Build and Tagging Instructions
-
--Build the Docker image
-
-docker build -t file-api .
-
-- Tag image for AWS ECR
-
-docker tag file-api:latest 855968371293.dkr.ecr.us-east-1.amazonaws.com/file-api:build-201603
-
-- Login to AWS ECR
-  aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 855968371293.dkr.ecr.us-east-1.amazonaws.com
-
-- Push the image to AWS ECR
-  docker push 855968371293.dkr.ecr.us-east-1.amazonaws.com/file-api:build-201603
+SSL for the API was not implemented due to time constraints and scope simplicity.
