@@ -59,4 +59,85 @@ describe('FilesService', () => {
     );
     expect(result).toEqual({ id: 'mock-id' });
   });
+
+  it('should return all files with user data', async () => {
+    const mockFiles = [
+      {
+        id: 'file-1',
+        title: 'File 1',
+        description: 'Desc',
+        category: Category.CONFLICT_RESOLUTION,
+        language: Language.EN,
+        provider: Provider.INTERNAL,
+        role: Role.MENTEE,
+        fileUrl: 'https://s3-url.com/file1.pdf',
+        viewCount: 5,
+        createdAt: new Date('2025-07-19T00:00:00Z'),
+        user: {
+          id: 'user-1',
+          name: 'John',
+          surname: 'Doe',
+          email: 'john@example.com',
+        },
+      },
+    ];
+
+    fileRepository.findAll = jest.fn().mockResolvedValue(mockFiles);
+
+    const result = await service.findAllFiles();
+
+    expect(fileRepository.findAll).toHaveBeenCalled();
+    expect(result).toEqual([
+      {
+        id: 'file-1',
+        title: 'File 1',
+        description: 'Desc',
+        category: Category.CONFLICT_RESOLUTION,
+        language: Language.EN,
+        provider: Provider.INTERNAL,
+        role: Role.MENTEE,
+        fileUrl: 'https://s3-url.com/file1.pdf',
+        viewCount: 5,
+        createdAt: new Date('2025-07-19T00:00:00Z'),
+        user: {
+          id: 'user-1',
+          name: 'John',
+          surname: 'Doe',
+          email: 'john@example.com',
+        },
+      },
+    ]);
+  });
+
+  it('should return stats with total uploads, category breakdown, and top files', async () => {
+    fileRepository.count = jest.fn().mockResolvedValue(10);
+
+    fileRepository.getCategoryBreakdown = jest.fn().mockResolvedValue({
+      TRAINING: 6,
+      CONFLICT_RESOLUTION: 4,
+    });
+
+    fileRepository.getTopFiles = jest.fn().mockResolvedValue([
+      { id: 'f1', title: 'File 1', viewCount: 20 },
+      { id: 'f2', title: 'File 2', viewCount: 15 },
+    ]);
+
+    const result = await service.getStats();
+
+    expect(fileRepository.count).toHaveBeenCalled();
+    expect(fileRepository.getCategoryBreakdown).toHaveBeenCalled();
+    expect(fileRepository.getTopFiles).toHaveBeenCalled();
+
+    expect(result).toEqual({
+      totalUploads: 10,
+      categoryBreakdown: {
+        TRAINING: 6,
+        CONFLICT_RESOLUTION: 4,
+      },
+      topFiles: [
+        { id: 'f1', title: 'File 1', viewCount: 20 },
+        { id: 'f2', title: 'File 2', viewCount: 15 },
+      ],
+    });
+  });
 });

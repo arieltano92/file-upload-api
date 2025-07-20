@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
-import { RegisterDto } from './dto/register.dto';
+import { RegisterDto, RegisterOutputDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 
 @Injectable()
@@ -12,9 +12,8 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async register(registerDto: RegisterDto) {
+  async register(registerDto: RegisterDto): Promise<RegisterOutputDto> {
     const hashedPassword = await bcrypt.hash(registerDto.password, 10);
-    console.log(registerDto);
     const existingUser = await this.usersService.findByEmail(registerDto.email);
     console.log('Existing User:', existingUser);
     if (existingUser) {

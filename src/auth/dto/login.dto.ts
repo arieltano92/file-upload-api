@@ -10,3 +10,8 @@ export class LoginDto {
   @IsString()
   password: string;
 }
+
+export class LoginOutputDto {
+  @ApiProperty({ example: 'JWT token string' })
+  access_token: string;
+}

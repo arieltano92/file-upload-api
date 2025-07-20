@@ -82,10 +82,10 @@ docker build -t file-api .
 
 - Tag image for AWS ECR
 
-docker tag file-api:latest 855968371293.dkr.ecr.us-east-1.amazonaws.com/file-api:build-201457
+docker tag file-api:latest 855968371293.dkr.ecr.us-east-1.amazonaws.com/file-api:build-201603
 
 - Login to AWS ECR
   aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 855968371293.dkr.ecr.us-east-1.amazonaws.com
 
 - Push the image to AWS ECR
-  docker push 855968371293.dkr.ecr.us-east-1.amazonaws.com/file-api:latest
+  docker push 855968371293.dkr.ecr.us-east-1.amazonaws.com/file-api:build-201603
